@@ -1,10 +1,26 @@
+#pragma once
+#include <qwt_plot.h>
+#include <qwt_plot_curve.h>
 #include "Observer.h"
 
-class ObserverGraph : public Observer
+class QwtPlotMultiBarChart;
+
+class ObserverGraph: public QwtPlot, public Observer
 {
-private:
+    Q_OBJECT
 
 public:
-	ObserverGraph();
-	void update();
+    ObserverGraph( QWidget * = NULL );
+    void update();
+
+public Q_SLOTS:
+    //void setMode( int );
+    //void setOrientation( int );
+    //void exportChart();
+
+private:
+    void populate();
+
+
+    QwtPlotCurve *d_curveChartItem;
 };
