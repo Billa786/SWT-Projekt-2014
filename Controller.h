@@ -2,17 +2,20 @@
 #include "Subject.h"
 #include <windows.h>
 #include "ObserverBar.h"
+#include <QtCore>
 
-class Controller
+class Controller : public QObject
 {
-private:
-
+    Q_OBJECT
 
 public:
     Subject *subject;
 
     Controller();
-	~Controller();
-	void applyChanges();
+    ~Controller();
+
+    QTimer *timer;
+
+    Q_SLOT void applyChanges();
 
 };
