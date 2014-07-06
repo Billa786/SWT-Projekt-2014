@@ -6,6 +6,10 @@
 Controller::Controller()
 {
 	subject = new Subject();
+    	timer = new QTimer(this);
+	connect (timer, SIGNAL(timeout()), this, SLOT(applyChanges()));
+	timer->setInterval(60000);
+    	timer->start();
 }
 
 Controller::~Controller()
