@@ -1,7 +1,11 @@
+#include "Subject.h"
+#include <windows.h>
+#include <string>
+#include <urlmon.h>
+#include <fstream>
 #include <iostream>
 using namespace std;
 #include <WinInet.h>
-//#pragma comment(lib, "Wininet.lib")
 #include "Weather.h"
 
 
@@ -42,7 +46,6 @@ void Subject::parse()
     unsigned int i=0, j=0;
     Weather weatherData;
 	string line;
-	string parsedLine;
     ifstream dataStream ("C:\\Users\\Qazi\\Desktop\\Temperaturdaten.txt");
 	weather tempData;
 
@@ -77,14 +80,9 @@ void Subject::parse()
 			tempData.temp = tempData.temp + line[i];
 		}
 
-		/* insert structure to list */
-		//weather_list.insert(weather_list.end(), tempData);
-        //Weather::arrWeather[j]=tempData;
-
+        /* insert structure to list */
         weatherData.set_weather(tempData, j);
-        //weatherData.arrWeather[j]=tempData;
-		j++;
+	j++;
 	}
-
 
 }
