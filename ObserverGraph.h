@@ -10,17 +10,12 @@ class ObserverGraph: public QwtPlot, public Observer
     Q_OBJECT
 
 public:
-    ObserverGraph( QWidget * = NULL );
+    ObserverGraph( QWidget * = NULL, QwtPlotCurve * = NULL );
     void update();
+    QwtPlotCurve *d_curveChartItem;
 
 public Q_SLOTS:
-    //void setMode( int );
-    //void setOrientation( int );
-    //void exportChart();
 
 private:
-    void populate();
 
-
-    QwtPlotCurve *d_curveChartItem;
 };
