@@ -4,6 +4,8 @@
 #include <qtoolbutton.h>
 #include <qcombobox.h>
 #include "ObserverBar.h"
+#include "ObserverGraph.h"
+#include "ObserverText.h"
 #include "Controller.h"
 #include <qwt_plot_renderer.h>
 #include <qwt_plot_canvas.h>
@@ -12,6 +14,11 @@
 #include <qwt_plot_layout.h>
 #include <qwt_legend.h>
 #include <qwt_scale_draw.h>
+#include <qwt_plot_grid.h>
+#include <qwt_symbol.h>
+#include <QtWidgets/QLabel>
+#include <QTimer>
+#include <qwt_plot_barchart.h>
 
 class MainWindow: public QMainWindow
 {
@@ -20,26 +27,29 @@ public:
 
 private:
     ObserverBar *barChart;
+    ObserverGraph *plot;
+    ObserverText *label;
 };
 
 MainWindow::MainWindow( QWidget *parent ):
     QMainWindow( parent )
 {
+    /////////////////////////////////////////// BarChart //////////////////////////////////////////////////
 
     QwtPlotMultiBarChart *d_barChartItem;
     d_barChartItem = new QwtPlotMultiBarChart( "Bar Chart " );
     barChart = new ObserverBar( this, d_barChartItem );
-    /////////////////////////////////////////////////////
+
     barChart->setAutoFillBackground( true );
-
-    barChart->setPalette( Qt::white );
-    barChart->canvas()->setPalette( QColor( "LemonChiffon" ) );
-
-    barChart->setTitle( "Temperature" );
-
-    barChart->setAxisTitle( QwtPlot::yLeft, "Temperature" );
+    barChart->canvas()->setPalette( QColor( "White" ) );
+    //barChart->setTitle( "Temperature" );
+    barChart->setAxisTitle( QwtPlot::yLeft, "Temperature in ºC" );
     barChart->setAxisTitle( QwtPlot::xBottom, "Location" );
+    barChart->insertLegend( new QwtLegend() );
 
+    QwtPlotGrid *grid1 = new QwtPlotGrid();
+    //grid->attach( &plot );
+    grid1->attach( (QwtPlot*)barChart );
 
     d_barChartItem->setLayoutPolicy( QwtPlotMultiBarChart::AutoAdjustSamples );
     d_barChartItem->setSpacing( 20 );
@@ -47,60 +57,70 @@ MainWindow::MainWindow( QWidget *parent ):
 
     d_barChartItem->attach( barChart );
 
-    barChart->insertLegend( new QwtLegend() );
-
-    barChart->update();
-    //setOrientation( 0 );
-
     barChart->setAutoReplot( true );
-    /// ////////////////////////////////////////////////
-    setCentralWidget( barChart );
+    barChart->setGeometry(30, 30, 400, 400);
 
-    QToolBar *toolBar = new QToolBar( this );
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    QComboBox *typeBox = new QComboBox( toolBar );
-    typeBox->addItem( "Bar" );
-    typeBox->addItem( "Graph" );
-    typeBox->addItem( "Text" );
-    typeBox->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
+    ////////////////////////////////////////// CurveChart /////////////////////////////////////////////////
 
-    /*QComboBox *orientationBox = new QComboBox( toolBar );
-    orientationBox->addItem( "Vertical" );
-    orientationBox->addItem( "Horizontal" );
-    orientationBox->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
+    QwtPlotCurve *curve = new QwtPlotCurve();
+    plot = new ObserverGraph(this, curve);
+    plot->setCanvasBackground( Qt::white );
+    plot->insertLegend( new QwtLegend() );
 
-    QToolButton *btnExport = new QToolButton( toolBar );
-    btnExport->setText( "Export" );
-    btnExport->setToolButtonStyle( Qt::ToolButtonTextUnderIcon );
-    connect( btnExport, SIGNAL( clicked() ), barChart, SLOT( exportChart() ) );*/
+    plot->setAxisTitle( QwtPlot::yLeft, "Temperature in ºC" );
+    plot->setAxisTitle( QwtPlot::xBottom, "Location" );
 
-    toolBar->addWidget( typeBox );
-    //toolBar->addWidget( orientationBox );
-    //toolBar->addWidget( btnExport );
-    addToolBar( toolBar );
+    QwtPlotGrid *grid2 = new QwtPlotGrid();
+    grid2->attach( (QwtPlot*)plot );
+
+    curve->setPen( Qt::gray, 4 ),
+    curve->setRenderHint( QwtPlotItem::RenderAntialiased, true );
+
+    QwtSymbol *symbol = new QwtSymbol( QwtSymbol::Ellipse,
+    QBrush( Qt::yellow ), QPen( Qt::red, 2 ), QSize( 6, 6 ) );
+    curve->setSymbol( symbol );
+    curve->attach( (QwtPlot*)plot );
+
+    plot->setAutoReplot( true );
+    plot->setGeometry(450,30,400,400);
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //////////////////////////////////////////// Label ////////////////////////////////////////////////////
+
+    label = new ObserverText(this);
+    label->setObjectName(QStringLiteral("label"));
+    label->setGeometry(925, 60, 200, 200);
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /////////////////////////////////////////// Controller ////////////////////////////////////////////////
 
     Controller *controller = new Controller();
     controller->subject->attach(barChart);
+    controller->subject->attach(plot);
+    controller->subject->attach(label);
     controller->applyChanges();
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //barChart->setMode( typeBox->currentIndex() );
-    connect( typeBox, SIGNAL( currentIndexChanged( int ) ),
-             barChart, SLOT( setMode( int ) ) );
-
-    //barChart->setOrientation( orientationBox->currentIndex() );
-    //connect( orientationBox, SIGNAL( currentIndexChanged( int ) ),
-    //         barChart, SLOT( setOrientation( int ) ) );
 }
+    /////////////////////////////////////////// Main //////////////////////////////////////////////////////
 
 int main( int argc, char **argv )
 {
     QApplication a( argc, argv );
-
     MainWindow mainWindow;
 
-    mainWindow.resize( 600, 400 );
+    mainWindow.resize( 1300, 450 );
     mainWindow.show();
+    mainWindow.setWindowTitle("Temperature Display");
 
     return a.exec();
 }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    
