@@ -15,13 +15,7 @@ public:
     QwtPlotMultiBarChart *d_barChartItem;
 
 public Q_SLOTS:
-    //void setMode( int );
-    //void setOrientation( int );
-    //void exportChart();
 
 private:
-
-
-
 
 };
