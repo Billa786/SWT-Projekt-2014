@@ -1,25 +1,20 @@
 #pragma once
-#include <qwt_plot.h>
+#include <QLabel>
 #include "Observer.h"
 
 class QwtPlotMultiBarChart;
 
-class ObserverText: public QwtPlot, public Observer
+class ObserverText: public QLabel, public Observer
 {
     Q_OBJECT
 
 public:
-    ObserverText( QWidget * = NULL );
+    ObserverText( QWidget * = NULL);
     void update();
+    QLabel *label;
 
 public Q_SLOTS:
-    //void setMode( int );
-    //void setOrientation( int );
-    //void exportChart();
 
 private:
-    void populate();
-
-
     QwtPlotMultiBarChart *d_barChartItem;
 };
