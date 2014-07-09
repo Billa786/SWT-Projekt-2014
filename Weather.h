@@ -9,10 +9,13 @@ struct weather
     string temp;
 };
 
+
 class Weather
 {
 public:
     Weather();
     void set_weather(weather, int);
+    void set_metaData(string, int);
     static weather arrWeather[6];
+    static string metaData[2];
 };
