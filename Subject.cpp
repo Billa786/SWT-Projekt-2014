@@ -43,7 +43,7 @@ void Subject::download()
 
 void Subject::parse()
 {
-    unsigned int i=0, j=0;
+    unsigned int i=0, j=0, k=0;
     Weather weatherData;
 	string line;
     ifstream dataStream ("C:\\Users\\Qazi\\Desktop\\Temperaturdaten.txt");
@@ -64,9 +64,13 @@ void Subject::parse()
 			return;
         }
 
-		/* lines with "#" are comments */
+        /* lines with "#" are comments/metadata */
 		if(line[0] == 35)
+        {
+            weatherData.set_metaData(line, k);
+            k++;
 			continue;
+        }
 
 		/* parse location */
 		for( i=0; line[i] != ',' ; i++)
@@ -82,7 +86,7 @@ void Subject::parse()
 
         /* insert structure to list */
         weatherData.set_weather(tempData, j);
-	j++;
+		j++;
 	}
 
 }
