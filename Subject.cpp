@@ -9,17 +9,19 @@ using namespace std;
 #include "Weather.h"
 
 
-
+/*Adds a new observer to observerlist*/
 void Subject::attach(Observer *observer)
 {
 	observer_list.insert(observer_list.end(), observer);
 }
 
+/*Removes an observer of the observerlist*/
 void Subject::detach(Observer *observer)
 {
 	observer_list.remove(observer);
 }
 
+/*Calls update function of every observer in the observerlist*/
 void Subject::notify()
 {
 	for(observer_list_iter = observer_list.begin(); observer_list_iter != observer_list.end(); observer_list_iter++)
@@ -27,26 +29,38 @@ void Subject::notify()
     cout << "called notify()" << endl;
 }
 
-void Subject::download()
+/*Downloads the data from the internet to a file using the WinInet library*/
+bool Subject::download()
 { 
 	/* Download data */
 	HRESULT hr;
 	DeleteUrlCacheEntry(TEXT("http://tk-labor.iem.thm.de/bti-swt-pa-ss14/hochrechnungen.txt"));
     hr = URLDownloadToFile(NULL,TEXT("http://tk-labor.iem.thm.de/bti-swt-pa-ss14/hochrechnungen.txt"), TEXT("C:\\Users\\Qazi\\Desktop\\Temperaturdaten.txt"), 0, NULL);
 
-    if(!SUCCEEDED(hr)) {
-        string mMessage = "Download failed";
-        MessageBox(NULL, TEXT("http://tk-labor.iem.thm.de/bti-swt-pa-ss14/hochrechnungen.txt"), TEXT("C:\\Users\\Qazi\\Desktop\\Temperaturdaten.txt"), MB_OK | MB_ICONERROR);
+    if(!SUCCEEDED(hr))
+    {
+        MessageBox(NULL, TEXT("Fehler beim Download der Daten. Internetverbindung pruefen."), TEXT("Fehlermeldung"), MB_OK | MB_ICONERROR);
+        return false;
     }
     cout << "download finished" << endl;
+    return true;
 }
 
-void Subject::parse()
+/*Function for parsing the downloaded data
+  and saves them into the arrWeather and metaData arrays
+*/
+bool Subject::parse()
 {
+    /*Loop variables*/
     unsigned int i=0, j=0, k=0;
     Weather weatherData;
 	string line;
     ifstream dataStream ("C:\\Users\\Qazi\\Desktop\\Temperaturdaten.txt");
+    if(!dataStream.is_open())
+    {
+        MessageBox(NULL, TEXT("Fehler beim Oeffnen der Datei."), TEXT("Fehlermeldung"), MB_OK | MB_ICONERROR);
+        return false;
+    }
 	weather tempData;
 
 	while(!dataStream.eof())
@@ -61,12 +75,17 @@ void Subject::parse()
 		if(line == "")
         {
             cout << "parsing finished" << endl;
-			return;
+            return true;
         }
 
         /* lines with "#" are comments/metadata */
 		if(line[0] == 35)
         {
+            if(k>1)
+            {
+                MessageBox(NULL, TEXT("Mehr als zwei Zeilen mit Metadaten vorhanden."), TEXT("Fehlermeldung"), MB_OK | MB_ICONERROR);
+                return false;
+            }
             weatherData.set_metaData(line, k);
             k++;
 			continue;
@@ -85,8 +104,13 @@ void Subject::parse()
 		}
 
         /* insert structure to list */
+        if(j>5)
+        {
+            MessageBox(NULL, TEXT("Mehr als 6 Orte mit Temperaturdaten vorhanden."), TEXT("Fehlermeldung"), MB_OK | MB_ICONERROR);
+            return false;
+        }
         weatherData.set_weather(tempData, j);
 		j++;
 	}
-
+    return true;
 }
