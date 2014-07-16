@@ -8,9 +8,12 @@
 #include <qwt_legend.h>
 #include <qwt_scale_draw.h>
 
-
+/* Abstract class where all observers are derived from.
+   Forces derived classes to implement update function.
+*/
 class Observer
 {
+
 public:
     virtual void update() = 0;
 };
