@@ -5,6 +5,9 @@
 
 class QwtPlotMultiBarChart;
 
+/* Derived class of abstract observer class.
+   Implements update function for the plot.
+*/
 class ObserverGraph: public QwtPlot, public Observer
 {
     Q_OBJECT
@@ -12,10 +15,7 @@ class ObserverGraph: public QwtPlot, public Observer
 public:
     ObserverGraph( QWidget * = NULL, QwtPlotCurve * = NULL );
     void update();
-    QwtPlotCurve *d_curveChartItem;
-
-public Q_SLOTS:
 
 private:
-
+    QwtPlotCurve *curveChartItem;
 };
