@@ -4,6 +4,9 @@
 
 class QwtPlotMultiBarChart;
 
+/* Derived class of abstract observer class.
+   Implements update function for the label.
+*/
 class ObserverText: public QLabel, public Observer
 {
     Q_OBJECT
@@ -11,10 +14,7 @@ class ObserverText: public QLabel, public Observer
 public:
     ObserverText( QWidget * = NULL);
     void update();
-    QLabel *label;
-
-public Q_SLOTS:
 
 private:
-    QwtPlotMultiBarChart *d_barChartItem;
+    QLabel *label;
 };
