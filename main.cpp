@@ -18,6 +18,7 @@
 #include <qwt_symbol.h>
 #include <QtWidgets/QLabel>
 #include <QTimer>
+#include <qcolor.h>
 #include <qwt_plot_barchart.h>
 
 class MainWindow: public QMainWindow
@@ -34,11 +35,12 @@ private:
 MainWindow::MainWindow( QWidget *parent ):
     QMainWindow( parent )
 {
-    /////////////////////////////////////////// BarChart //////////////////////////////////////////////////
+    /* ---------------- BarChart --------------------------- */
 
-    QwtPlotMultiBarChart *d_barChartItem;
-    d_barChartItem = new QwtPlotMultiBarChart( "Bar Chart " );
-    barChart = new ObserverBar( this, d_barChartItem );
+    /*Create barChart and set its attributes and finally set its position on GUI*/
+    QwtPlotMultiBarChart *barChartItem;
+    barChartItem = new QwtPlotMultiBarChart( "Bar Chart " );
+    barChart = new ObserverBar( this, barChartItem );
 
     barChart->setAutoFillBackground( true );
     barChart->canvas()->setPalette( QColor( "White" ) );
@@ -47,23 +49,22 @@ MainWindow::MainWindow( QWidget *parent ):
     barChart->setAxisTitle( QwtPlot::xBottom, "Location" );
     barChart->insertLegend( new QwtLegend() );
 
-    QwtPlotGrid *grid1 = new QwtPlotGrid();
-    //grid->attach( &plot );
-    grid1->attach( (QwtPlot*)barChart );
+    QwtPlotGrid *gridBar = new QwtPlotGrid();
+    gridBar->attach( (QwtPlot*)barChart );
 
-    d_barChartItem->setLayoutPolicy( QwtPlotMultiBarChart::AutoAdjustSamples );
-    d_barChartItem->setSpacing( 20 );
-    d_barChartItem->setMargin( 3 );
+    barChartItem->setLayoutPolicy( QwtPlotMultiBarChart::AutoAdjustSamples );
+    barChartItem->setSpacing( 20 );
+    barChartItem->setMargin( 3 );
 
-    d_barChartItem->attach( barChart );
+    barChartItem->attach( barChart );
 
     barChart->setAutoReplot( true );
     barChart->setGeometry(30, 30, 400, 400);
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    ////////////////////////////////////////// CurveChart /////////////////////////////////////////////////
+    /* ---------------------- CurveChart ---------------------- */
 
+    /*Create plot and set its attributes and finally set its position on GUI*/
     QwtPlotCurve *curve = new QwtPlotCurve();
     plot = new ObserverGraph(this, curve);
     plot->setCanvasBackground( Qt::white );
@@ -72,8 +73,8 @@ MainWindow::MainWindow( QWidget *parent ):
     plot->setAxisTitle( QwtPlot::yLeft, "Temperature in ºC" );
     plot->setAxisTitle( QwtPlot::xBottom, "Location" );
 
-    QwtPlotGrid *grid2 = new QwtPlotGrid();
-    grid2->attach( (QwtPlot*)plot );
+    QwtPlotGrid *gridPlot = new QwtPlotGrid();
+    gridPlot->attach( (QwtPlot*)plot );
 
     curve->setPen( Qt::gray, 4 ),
     curve->setRenderHint( QwtPlotItem::RenderAntialiased, true );
@@ -86,28 +87,28 @@ MainWindow::MainWindow( QWidget *parent ):
     plot->setAutoReplot( true );
     plot->setGeometry(450,30,400,400);
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //////////////////////////////////////////// Label ////////////////////////////////////////////////////
 
+    /* ---------------- Label ------------------- */
+
+    /*Create label and set its position on GUI*/
     label = new ObserverText(this);
     label->setObjectName(QStringLiteral("label"));
-    label->setGeometry(925, 60, 200, 200);
+    label->setGeometry(925, 60, 200, 250);
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /////////////////////////////////////////// Controller ////////////////////////////////////////////////
 
+    /* ----------- Controller ----------- */
+
+    /*Create controller and add observers to list
+      and call the applyChanges function once to initialize*/
     Controller *controller = new Controller();
     controller->subject->attach(barChart);
     controller->subject->attach(plot);
     controller->subject->attach(label);
     controller->applyChanges();
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-
 }
-    /////////////////////////////////////////// Main //////////////////////////////////////////////////////
 
 int main( int argc, char **argv )
 {
@@ -120,7 +121,3 @@ int main( int argc, char **argv )
 
     return a.exec();
 }
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////
-    
-    
