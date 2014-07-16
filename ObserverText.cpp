@@ -15,18 +15,26 @@ ObserverText::ObserverText( QWidget *parent):
     label = this;
 }
 
+/*Implementation of the update function() for Label, gets the new data from the weather class
+  and refreshs text(weather data) on the GUI
+*/
 void ObserverText::update()
 {
     string labelText = "";
-    for(int i = 0; i < 6 ; i++)
+    for(int i = 0; i < 8 ; i++)
     {
-        //labelText = Weather::arrWeather[i].location.c_str() + "  " + Weather::arrWeather[i].temp.c_str() + "\n";
-        labelText.append(Weather::arrWeather[i].location.c_str());
-        if(i<4)
+        if(i<2)
+        {
+            labelText.append(Weather::metaData[i].c_str());
+            labelText.append("\n\n");
+            continue;
+        }
+        labelText.append(Weather::arrWeather[i-2].location.c_str());
+        if(i<6)
             labelText.append("\t\t");
         else
             labelText.append("\t");
-        labelText.append(Weather::arrWeather[i].temp.c_str());
+        labelText.append(Weather::arrWeather[i-2].temp.c_str());
         labelText.append(" ºC\n\n");
     }
 
