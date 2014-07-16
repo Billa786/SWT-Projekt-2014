@@ -5,28 +5,6 @@
 
 class QwtPlotMultiBarChart;
 
-class ObserverBar: public QwtPlot, public Observer
-{
-    Q_OBJECT
-
-public:
-    ObserverBar( QWidget * = NULL, QwtPlotMultiBarChart * = NULL);
-    void update();
-    QwtPlotMultiBarChart *d_barChartItem;
-
-public Q_SLOTS:
-
-private:
-
-};
-
-#pragma once
-#include <qwt_plot.h>
-#include "Observer.h"
-
-
-class QwtPlotMultiBarChart;
-
 /* Derived class of abstract observer class.
    Implements update function for the barChart.
 */
