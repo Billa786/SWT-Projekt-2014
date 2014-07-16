@@ -4,7 +4,10 @@
 using namespace std;
 #include "Observer.h"
 
-
+/* Provides lists to manage observers.
+   Allows to add/remove observers and to notify each of them by call notify().
+   Provides methods to download and parse the weather data.
+*/
 class Subject
 {
 private:
@@ -16,6 +19,6 @@ public:
 	void attach(Observer* observer);
 	void detach(Observer* observer);
 	void notify();
-	void download();
-	void parse();
+    bool download();
+    bool parse();
 };
